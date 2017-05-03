@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// Connection implements Conn interface in pubsub package
 type Connection struct {
 	id       int64
 	ws       *websocket.Conn
@@ -25,6 +26,7 @@ type sendRequest struct {
 	errCh chan error
 }
 
+// NewConnection creates a new instance of Connection
 func NewConnection(id int64, ws *websocket.Conn) *Connection {
 	return &Connection{
 		id:   id,
@@ -33,10 +35,12 @@ func NewConnection(id int64, ws *websocket.Conn) *Connection {
 	}
 }
 
+// ID returns the connection ID
 func (c *Connection) ID() int64 {
 	return c.id
 }
 
+// Send sends the data to the websocket
 func (c *Connection) Send(data []byte) error {
 	log.Printf("Send: \"%s\"", string(data))
 	if c.isClosed() {
@@ -56,6 +60,7 @@ func (c *Connection) Send(data []byte) error {
 	return err
 }
 
+// Close closes the connection
 func (c *Connection) Close() {
 	log.Printf("Close")
 	defer log.Printf("Close done")
@@ -71,11 +76,11 @@ func (c *Connection) Close() {
 	close(c.send)
 }
 
-func (c *Connection) OnClose(fn func(c *Connection)) {
+func (c *Connection) onClose(fn func(c *Connection)) {
 	c.onCloseCb = fn
 }
 
-func (c *Connection) OnMessage(fn func(c *Connection, b []byte)) {
+func (c *Connection) onMessage(fn func(c *Connection, b []byte)) {
 	c.onMesgCb = fn
 }
 

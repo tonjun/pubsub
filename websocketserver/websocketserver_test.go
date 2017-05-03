@@ -120,7 +120,8 @@ func TestMessageCallback(t *testing.T) {
 		Conn    pubsub.Conn
 	}
 
-	messages := make([]M, 0)
+	//messages := make([]M, 0)
+	var messages []M
 	check1 := make(chan bool)
 	check2 := make(chan bool)
 	check3 := make(chan bool)
