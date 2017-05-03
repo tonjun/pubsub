@@ -17,9 +17,7 @@ func TestConnectionCallbacks(t *testing.T) {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 
 	var srv pubsub.Server
-
 	addr := ":7070"
-
 	srv = NewWebSocketServer(&Options{
 		ListenAddr: addr,
 		Pattern:    "/ws",
