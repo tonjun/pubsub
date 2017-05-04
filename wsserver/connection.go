@@ -11,7 +11,7 @@ import (
 
 // Connection implements Conn interface in pubsub package
 type Connection struct {
-	id       int64
+	id       uint64
 	ws       *websocket.Conn
 	send     chan sendRequest
 	closed   bool
@@ -27,7 +27,7 @@ type sendRequest struct {
 }
 
 // NewConnection creates a new instance of Connection
-func NewConnection(id int64, ws *websocket.Conn) *Connection {
+func NewConnection(id uint64, ws *websocket.Conn) *Connection {
 	return &Connection{
 		id:   id,
 		ws:   ws,
@@ -36,13 +36,13 @@ func NewConnection(id int64, ws *websocket.Conn) *Connection {
 }
 
 // ID returns the connection ID
-func (c *Connection) ID() int64 {
+func (c *Connection) ID() uint64 {
 	return c.id
 }
 
 // Send sends the data to the websocket
 func (c *Connection) Send(data []byte) error {
-	log.Printf("Send: \"%s\"", string(data))
+	//log.Printf("Send: \"%s\"", string(data))
 	if c.isClosed() {
 		return fmt.Errorf("connection closed")
 	}

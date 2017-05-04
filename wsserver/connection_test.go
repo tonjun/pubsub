@@ -22,7 +22,7 @@ func TestConnectionSend(t *testing.T) {
 	added := make(chan pubsub.Conn)
 	closed := make(chan pubsub.Conn)
 	send := make(chan string)
-	connections := make(map[int64]pubsub.Conn)
+	connections := make(map[uint64]pubsub.Conn)
 	go func() {
 		for {
 			select {
@@ -100,7 +100,7 @@ func TestConnectionSendOnClosed(t *testing.T) {
 	added := make(chan pubsub.Conn)
 	closed := make(chan pubsub.Conn)
 	send := make(chan string)
-	connections := make(map[int64]pubsub.Conn)
+	connections := make(map[uint64]pubsub.Conn)
 	go func() {
 		for {
 			select {

@@ -1,7 +1,7 @@
 package pubsub
 
 type Conn interface {
-	ID() int64
+	ID() uint64
 	Send(data []byte) error
 	Close()
 }

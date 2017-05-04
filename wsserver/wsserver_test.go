@@ -26,7 +26,7 @@ func TestConnectionCallbacks(t *testing.T) {
 
 	added := make(chan pubsub.Conn)
 	closed := make(chan pubsub.Conn)
-	connections := make(map[int64]pubsub.Conn)
+	connections := make(map[uint64]pubsub.Conn)
 	check1 := make(chan bool)
 	check2 := make(chan bool)
 	check3 := make(chan bool)
@@ -43,15 +43,15 @@ func TestConnectionCallbacks(t *testing.T) {
 			case <-check1:
 				assert.Equal(t, 1, len(connections))
 				conn := connections[1]
-				assert.Equal(t, int64(1), conn.ID())
+				assert.Equal(t, uint64(1), conn.ID())
 
 			case <-check2:
 				assert.Equal(t, 2, len(connections))
 				conn := connections[1]
-				assert.Equal(t, int64(1), conn.ID())
+				assert.Equal(t, uint64(1), conn.ID())
 
 				conn = connections[2]
-				assert.Equal(t, int64(2), conn.ID())
+				assert.Equal(t, uint64(2), conn.ID())
 
 			case <-check3:
 				assert.Equal(t, 1, len(connections))
@@ -136,7 +136,7 @@ func TestMessageCallback(t *testing.T) {
 			case <-check1:
 				assert.Equal(t, 1, len(messages))
 				assert.Equal(t, []byte("one"), messages[0].Message)
-				assert.Equal(t, int64(1), messages[0].Conn.ID())
+				assert.Equal(t, uint64(1), messages[0].Conn.ID())
 
 			case <-check2:
 				assert.Equal(t, 3, len(messages))
@@ -144,13 +144,13 @@ func TestMessageCallback(t *testing.T) {
 				assert.Equal(t, []byte("two"), messages[1].Message)
 				assert.Equal(t, []byte("three"), messages[2].Message)
 				for _, m := range messages {
-					assert.Equal(t, int64(1), m.Conn.ID())
+					assert.Equal(t, uint64(1), m.Conn.ID())
 				}
 
 			case <-check3:
 				assert.Equal(t, 4, len(messages))
 				assert.Equal(t, []byte("four"), messages[3].Message)
-				assert.Equal(t, int64(2), messages[3].Conn.ID())
+				assert.Equal(t, uint64(2), messages[3].Conn.ID())
 
 			}
 		}

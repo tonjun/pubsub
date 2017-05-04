@@ -34,10 +34,10 @@ type Options struct {
 // WSServer implements Server interface in pubsub package
 type WSServer struct {
 	opts        *Options
-	cntr        int64
+	cntr        uint64
 	cntrLck     sync.Mutex
 	svr         *http.Server
-	connections map[int64]*Connection
+	connections map[uint64]*Connection
 	register    chan pubsub.Conn
 	unregister  chan pubsub.Conn
 
@@ -50,7 +50,7 @@ type WSServer struct {
 func NewWSServer(opts *Options) *WSServer {
 	return &WSServer{
 		opts:        opts,
-		connections: make(map[int64]*Connection),
+		connections: make(map[uint64]*Connection),
 		register:    make(chan pubsub.Conn),
 		unregister:  make(chan pubsub.Conn),
 	}
@@ -144,7 +144,7 @@ func (s *WSServer) serveWS(w http.ResponseWriter, r *http.Request) {
 	c.readPump()
 }
 
-func (s *WSServer) nextID() int64 {
+func (s *WSServer) nextID() uint64 {
 	s.cntrLck.Lock()
 	defer s.cntrLck.Unlock()
 	s.cntr++
