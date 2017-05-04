@@ -1,9 +1,8 @@
 package store
 
 import (
-	"log"
+	//"log"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -36,9 +35,16 @@ func TestSubscribers(t *testing.T) {
 	subs.Add("t1", c2)
 	s := subs.GetSubscribers("t1")
 	assert.Equal(t, 2, len(s))
-	for i, c := range s {
-		log.Printf("conn id[%d]: %d %v", i, c.ID(), c)
-	}
+	assert.Equal(t, uint64(1), s[0].ID())
+	assert.Equal(t, uint64(2), s[1].ID())
+	//for i, c := range s {
+	//	log.Printf("conn id[%d]: %d %v", i, c.ID(), c)
+	//}
+	subs.Remove("t1", c1)
+
+	s = subs.GetSubscribers("t1")
+	assert.Equal(t, 1, len(s))
+	assert.Equal(t, uint64(2), s[0].ID())
+
 	subs.Close()
-	time.Sleep(10 * time.Millisecond)
 }

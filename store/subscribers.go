@@ -10,11 +10,10 @@ import (
 
 // Subscribers is responsible for storing the list of subscribers per topic
 type Subscribers struct {
-	tree *btree.BTree
-
-	add chan req
-	del chan req
-	get chan getReq
+	subs map[string]*btree.BTree
+	add  chan req
+	del  chan req
+	get  chan getReq
 }
 
 type req struct {
@@ -30,7 +29,7 @@ type getReq struct {
 // NewSubscribers returns a new instance of Subscribers store
 func NewSubscribers() *Subscribers {
 	return &Subscribers{
-		tree: btree.New(32),
+		subs: make(map[string]*btree.BTree),
 		add:  make(chan req),
 		del:  make(chan req),
 		get:  make(chan getReq),
@@ -77,6 +76,17 @@ func (s *Subscribers) GetSubscribers(topic string) []pubsub.Conn {
 	return subs
 }
 
+func (s *Subscribers) getTree(topic string) *btree.BTree {
+	var tree *btree.BTree
+	if t, ok := s.subs[topic]; !ok {
+		tree = btree.New(32)
+		s.subs[topic] = tree
+	} else {
+		tree = t
+	}
+	return tree
+}
+
 func (s *Subscribers) run() {
 	defer log.Printf("run done")
 	for {
@@ -86,21 +96,26 @@ func (s *Subscribers) run() {
 				log.Printf("add channel closed")
 				return
 			}
-			log.Printf("add: topic: \"%s\" connID: %d", r.topic, r.conn.ID())
+			//log.Printf("add: topic: \"%s\" connID: %d", r.topic, r.conn.ID())
 			i := treeItem{
 				Key:   r.conn.ID(),
 				Value: r.conn,
 			}
-			s.tree.ReplaceOrInsert(i)
+			s.getTree(r.topic).ReplaceOrInsert(i)
 
 		case r := <-s.del:
-			log.Printf("del: topic: \"%s\" connID: %d", r.topic, r.conn.ID())
+			//log.Printf("del: topic: \"%s\" connID: %d", r.topic, r.conn.ID())
+			i := treeItem{
+				Key:   r.conn.ID(),
+				Value: r.conn,
+			}
+			s.getTree(r.topic).Delete(i)
 
 		case r := <-s.get:
-			log.Printf("get: topic: \"%s\"", r.topic)
+			//log.Printf("get: topic: \"%s\"", r.topic)
 			pivot := treeItem{Key: 0}
 			conns := make([]pubsub.Conn, 0)
-			s.tree.AscendGreaterOrEqual(pivot, func(a btree.Item) bool {
+			s.getTree(r.topic).AscendGreaterOrEqual(pivot, func(a btree.Item) bool {
 				conns = append(conns, a.(treeItem).Value)
 				return true
 			})
