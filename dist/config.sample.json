@@ -1,6 +1,6 @@
 {
   "addr": ":7070",
-  "pattern": "/ws",
+  "path": "/ws",
   "tls": {
     "addr": "localhost:7171",
     "cert": "certs/combined.pem",

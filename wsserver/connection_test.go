@@ -50,7 +50,7 @@ func TestConnectionSend(t *testing.T) {
 	addr := ":7070"
 	srv = NewWSServer(&Options{
 		ListenAddr: addr,
-		Pattern:    "/ws",
+		Path:       "/ws",
 	})
 	assert.NotNil(t, srv)
 	srv.OnConnectionAdded(func(conn pubsub.Conn) {
@@ -131,7 +131,7 @@ func TestConnectionSendOnClosed(t *testing.T) {
 	addr := ":7070"
 	srv = NewWSServer(&Options{
 		ListenAddr: addr,
-		Pattern:    "/ws",
+		Path:       "/ws",
 	})
 	assert.NotNil(t, srv)
 	srv.OnConnectionAdded(func(conn pubsub.Conn) {

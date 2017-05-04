@@ -17,8 +17,8 @@ type PubSubServer struct {
 
 func NewPubSubServer(cfg *pubsub.Config) *PubSubServer {
 	opts := &wsserver.Options{
-		ListenAddr: ":7070",
-		Pattern:    "/ws",
+		ListenAddr: cfg.Addr,
+		Path:       cfg.Path,
 	}
 	return &PubSubServer{
 		srv:      wsserver.NewWSServer(opts),

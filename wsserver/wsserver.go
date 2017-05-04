@@ -21,8 +21,8 @@ type Options struct {
 	// ListenAddr is the listening address of the websocket server. e.g. ":7070"
 	ListenAddr string
 
-	// Pattern is the http handler pattern for websocket. e.g. "/ws"
-	Pattern string
+	// Path is the http handler path for websocket. e.g. "/ws"
+	Path string
 
 	// TLSCert is the certificate file path for listening on TLS connection
 	TLSCert string
@@ -66,7 +66,7 @@ var upgrader = websocket.Upgrader{
 // Run runs the websocket server. This calls ListenAndServe / ListenAndServeTLS
 func (s *WSServer) Run() {
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc(s.opts.Pattern, s.serveWS).Methods("GET")
+	router.HandleFunc(s.opts.Path, s.serveWS).Methods("GET")
 
 	go func() {
 		for {

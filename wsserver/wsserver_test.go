@@ -20,7 +20,7 @@ func TestConnectionCallbacks(t *testing.T) {
 	addr := ":7070"
 	srv = NewWSServer(&Options{
 		ListenAddr: addr,
-		Pattern:    "/ws",
+		Path:       "/ws",
 	})
 	assert.NotNil(t, srv)
 
@@ -111,7 +111,7 @@ func TestMessageCallback(t *testing.T) {
 
 	srv = NewWSServer(&Options{
 		ListenAddr: addr,
-		Pattern:    "/ws",
+		Path:       "/ws",
 	})
 	assert.NotNil(t, srv)
 
