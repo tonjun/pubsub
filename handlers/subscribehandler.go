@@ -13,6 +13,6 @@ func NewSubscribeHandler() *SubscribeHandler {
 	return &SubscribeHandler{}
 }
 
-func (h *SubscribeHandler) ProcessMessage(s pubsub.Server, c pubsub.Conn, mesg *pubsub.Message, data []byte) {
+func (h *SubscribeHandler) ProcessMessage(s pubsub.Server, c pubsub.Conn, mesg *pubsub.Message) {
 	log.Printf("ProcessMessage: op: %s", mesg.OP)
 }

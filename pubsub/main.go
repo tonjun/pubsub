@@ -3,6 +3,6 @@ package main
 import ()
 
 func main() {
-	srv := NewPubSubServer()
+	srv := NewPubSubServer(nil)
 	srv.Main()
 }
