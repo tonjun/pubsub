@@ -1,4 +1,4 @@
-package websocketserver
+package wsserver
 
 import (
 	"fmt"
@@ -48,7 +48,7 @@ func TestConnectionSend(t *testing.T) {
 	// create server and add callbacks
 	var srv pubsub.Server
 	addr := ":7070"
-	srv = NewWebSocketServer(&Options{
+	srv = NewWSServer(&Options{
 		ListenAddr: addr,
 		Pattern:    "/ws",
 	})
@@ -129,7 +129,7 @@ func TestConnectionSendOnClosed(t *testing.T) {
 	// create server and add callbacks
 	var srv pubsub.Server
 	addr := ":7070"
-	srv = NewWebSocketServer(&Options{
+	srv = NewWSServer(&Options{
 		ListenAddr: addr,
 		Pattern:    "/ws",
 	})

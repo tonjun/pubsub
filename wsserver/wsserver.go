@@ -1,7 +1,7 @@
 /*
-Package websocketserver implements Server and Conn pubsub interface using websockets
+Package wsserver implements Server and Conn pubsub interface using websockets
 */
-package websocketserver
+package wsserver
 
 import (
 	"log"
@@ -15,7 +15,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// Options is the options for NewWebSocketServer
+// Options is the options for NewWSServer
 type Options struct {
 
 	// ListenAddr is the listening address of the websocket server. e.g. ":7070"
@@ -31,8 +31,8 @@ type Options struct {
 	TLSKey string
 }
 
-// WebSocketServer implements Server interface in pubsub package
-type WebSocketServer struct {
+// WSServer implements Server interface in pubsub package
+type WSServer struct {
 	opts        *Options
 	cntr        int64
 	cntrLck     sync.Mutex
@@ -46,9 +46,9 @@ type WebSocketServer struct {
 	onMesgFn    func(data []byte, c pubsub.Conn)
 }
 
-// NewWebSocketServer creates a new instance of WebSocketServer
-func NewWebSocketServer(opts *Options) *WebSocketServer {
-	return &WebSocketServer{
+// NewWSServer creates a new instance of WSServer
+func NewWSServer(opts *Options) *WSServer {
+	return &WSServer{
 		opts:        opts,
 		connections: make(map[int64]*Connection),
 		register:    make(chan pubsub.Conn),
@@ -64,7 +64,7 @@ var upgrader = websocket.Upgrader{
 }
 
 // Run runs the websocket server. This calls ListenAndServe / ListenAndServeTLS
-func (s *WebSocketServer) Run() {
+func (s *WSServer) Run() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc(s.opts.Pattern, s.serveWS).Methods("GET")
 
@@ -102,7 +102,7 @@ func (s *WebSocketServer) Run() {
 }
 
 // Stop stops the websocket server
-func (s *WebSocketServer) Stop() {
+func (s *WSServer) Stop() {
 	err := s.svr.Close()
 	if err != nil {
 		log.Printf("Stop: ERROR: %s", err.Error())
@@ -110,21 +110,21 @@ func (s *WebSocketServer) Stop() {
 }
 
 // OnConnectionAdded assigns the connection added callback function
-func (s *WebSocketServer) OnConnectionAdded(fn func(c pubsub.Conn)) {
+func (s *WSServer) OnConnectionAdded(fn func(c pubsub.Conn)) {
 	s.connAddedFn = fn
 }
 
 // OnConnectionWillClose assigns the connection close callback function
-func (s *WebSocketServer) OnConnectionWillClose(fn func(c pubsub.Conn)) {
+func (s *WSServer) OnConnectionWillClose(fn func(c pubsub.Conn)) {
 	s.connCloseFn = fn
 }
 
 // OnMessage assigns the incoming message callback function
-func (s *WebSocketServer) OnMessage(fn func(data []byte, c pubsub.Conn)) {
+func (s *WSServer) OnMessage(fn func(data []byte, c pubsub.Conn)) {
 	s.onMesgFn = fn
 }
 
-func (s *WebSocketServer) serveWS(w http.ResponseWriter, r *http.Request) {
+func (s *WSServer) serveWS(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Printf("serveWS: ERROR: %s", err.Error())
@@ -144,14 +144,14 @@ func (s *WebSocketServer) serveWS(w http.ResponseWriter, r *http.Request) {
 	c.readPump()
 }
 
-func (s *WebSocketServer) nextID() int64 {
+func (s *WSServer) nextID() int64 {
 	s.cntrLck.Lock()
 	defer s.cntrLck.Unlock()
 	s.cntr++
 	return s.cntr
 }
 
-func (s *WebSocketServer) addConnection(c pubsub.Conn) {
+func (s *WSServer) addConnection(c pubsub.Conn) {
 	select {
 	case s.register <- c:
 	case <-time.After(1 * time.Second):
@@ -159,7 +159,7 @@ func (s *WebSocketServer) addConnection(c pubsub.Conn) {
 	}
 }
 
-func (s *WebSocketServer) delConnection(c pubsub.Conn) {
+func (s *WSServer) delConnection(c pubsub.Conn) {
 	select {
 	case s.unregister <- c:
 	case <-time.After(1 * time.Second):
