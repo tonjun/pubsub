@@ -5,6 +5,7 @@ import (
 	"github.com/tonjun/pubsub"
 )
 
+// treeItem is the binary tree item
 type treeItem struct {
 	Key   uint64 // Connection ID
 	Value pubsub.Conn
