@@ -47,6 +47,10 @@ func (ps *PubSubServer) Main() {
 	ps.srv.Run()
 }
 
+func (ps *PubSubServer) Close() {
+	ps.srv.Stop()
+}
+
 func (ps *PubSubServer) onMessage(data []byte, c pubsub.Conn) {
 
 	mesg := &pubsub.Message{}
