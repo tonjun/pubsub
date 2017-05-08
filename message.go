@@ -1,11 +1,27 @@
 package pubsub
 
+import (
+	"encoding/json"
+)
+
 type Message struct {
 	OP     string      `json:"op"`
 	ID     string      `json:"id"`
 	Topics []string    `json:"topics,omitempty"`
 	Data   interface{} `json:"data,omitempty"`
 	Sender interface{} `json:"data,omitempty"`
+}
+
+const (
+	OPSubscribe = "subscribe"
+)
+
+func ToBytes(m *Message) []byte {
+	b, err := json.Marshal(m)
+	if err != nil {
+		return []byte("")
+	}
+	return b
 }
 
 /*
