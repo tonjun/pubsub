@@ -6,13 +6,15 @@ import (
 
 	"github.com/tonjun/pubsub"
 	"github.com/tonjun/pubsub/handlers"
+	"github.com/tonjun/pubsub/store"
 	"github.com/tonjun/pubsub/wsserver"
 )
 
 type PubSubServer struct {
-	srv      *wsserver.WSServer
-	cfg      *pubsub.Config
-	handlers []pubsub.Handler
+	srv         *wsserver.WSServer
+	cfg         *pubsub.Config
+	handlers    []pubsub.Handler
+	subscribers *store.Subscribers
 }
 
 func NewPubSubServer(cfg *pubsub.Config) *PubSubServer {
@@ -21,9 +23,10 @@ func NewPubSubServer(cfg *pubsub.Config) *PubSubServer {
 		Path:       cfg.Path,
 	}
 	return &PubSubServer{
-		srv:      wsserver.NewWSServer(opts),
-		cfg:      cfg,
-		handlers: make([]pubsub.Handler, 0),
+		srv:         wsserver.NewWSServer(opts),
+		cfg:         cfg,
+		handlers:    make([]pubsub.Handler, 0),
+		subscribers: store.NewSubscribers(),
 	}
 }
 
@@ -31,16 +34,18 @@ func (ps *PubSubServer) Main() {
 
 	var h pubsub.Handler
 
+	ps.subscribers.Init()
+
 	h = handlers.NewConnectHandler()
 	ps.handlers = append(ps.handlers, h)
 
-	h = handlers.NewSubscribeHandler()
+	h = handlers.NewSubscribeHandler(ps.cfg, ps.subscribers)
 	ps.handlers = append(ps.handlers, h)
 
-	h = handlers.NewPublishHandler()
+	h = handlers.NewPublishHandler(ps.cfg, ps.subscribers)
 	ps.handlers = append(ps.handlers, h)
 
-	h = handlers.NewUnsubscribeHandler()
+	h = handlers.NewUnsubscribeHandler(ps.cfg, ps.subscribers)
 	ps.handlers = append(ps.handlers, h)
 
 	ps.srv.OnMessage(ps.onMessage)
@@ -53,6 +58,7 @@ func (ps *PubSubServer) Close() {
 
 func (ps *PubSubServer) onMessage(data []byte, c pubsub.Conn) {
 
+	//go func() {
 	mesg := &pubsub.Message{}
 	err := json.Unmarshal(data, mesg)
 	if err != nil {
@@ -61,8 +67,8 @@ func (ps *PubSubServer) onMessage(data []byte, c pubsub.Conn) {
 		c.Close()
 		return
 	}
-
 	for _, h := range ps.handlers {
 		h.ProcessMessage(ps.srv, c, mesg)
 	}
+	//}()
 }
