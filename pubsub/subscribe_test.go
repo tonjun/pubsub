@@ -57,6 +57,7 @@ var _ = Describe("Subscribe", func() {
 	AfterEach(func() {
 		log.Printf("AfterEach")
 		server.Close()
+		time.Sleep(500 * time.Millisecond)
 	})
 
 	It("Subscribe should get a successful response", func() {
@@ -65,14 +66,18 @@ var _ = Describe("Subscribe", func() {
 			"id":     "req1",
 			"topics": []string{"t1"},
 		})
-		Eventually(buffer).Should(gbytes.Say(`{"op":"subscribe-response","id":"req1"}`))
+		Eventually(buffer).Should(gbytes.Say(
+			`{"op":"subscribe_response","id":"req1","data":{"type":"success"}}`,
+		))
 
 		client.SendJSON(wsclient.M{
 			"op":     "subscribe",
 			"id":     "req2",
 			"topics": []string{"t1", "t2", "t3"},
 		})
-		Eventually(buffer).Should(gbytes.Say(`{"op":"subscribe-response","id":"req2"}`))
+		Eventually(buffer).Should(gbytes.Say(
+			`{"op":"subscribe_response","id":"req2","data":{"type":"success"}}`,
+		))
 
 	})
 
