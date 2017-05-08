@@ -1,18 +1,24 @@
 package handlers
 
 import (
-	"log"
+	//"log"
 
 	"github.com/tonjun/pubsub"
+	"github.com/tonjun/pubsub/store"
 )
 
 type UnsubscribeHandler struct {
+	cfg         *pubsub.Config
+	subscribers *store.Subscribers
 }
 
-func NewUnsubscribeHandler() *UnsubscribeHandler {
-	return &UnsubscribeHandler{}
+func NewUnsubscribeHandler(c *pubsub.Config, s *store.Subscribers) *UnsubscribeHandler {
+	return &UnsubscribeHandler{
+		cfg:         c,
+		subscribers: s,
+	}
 }
 
 func (h *UnsubscribeHandler) ProcessMessage(s pubsub.Server, c pubsub.Conn, mesg *pubsub.Message) {
-	log.Printf("ProcessMessage: op: %s", mesg.OP)
+	//log.Printf("ProcessMessage: op: %s", mesg.OP)
 }

@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"log"
+	//"log"
 
 	"github.com/tonjun/pubsub"
 )
@@ -14,5 +14,5 @@ func NewConnectHandler() *ConnectHandler {
 }
 
 func (h *ConnectHandler) ProcessMessage(s pubsub.Server, c pubsub.Conn, mesg *pubsub.Message) {
-	log.Printf("ProcessMessage: op: %s", mesg.OP)
+	//log.Printf("ProcessMessage: op: %s", mesg.OP)
 }
