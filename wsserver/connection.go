@@ -42,7 +42,7 @@ func (c *Connection) ID() uint64 {
 
 // Send sends the data to the websocket
 func (c *Connection) Send(data []byte) error {
-	//log.Printf("Send: \"%s\"", string(data))
+	log.Printf("%d Send: \"%s\"", c.id, string(data))
 	if c.isClosed() {
 		return fmt.Errorf("connection closed")
 	}
