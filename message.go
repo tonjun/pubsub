@@ -2,6 +2,7 @@ package pubsub
 
 import (
 	"encoding/json"
+	"log"
 )
 
 type Message struct {
@@ -9,16 +10,20 @@ type Message struct {
 	ID     string      `json:"id"`
 	Topics []string    `json:"topics,omitempty"`
 	Data   interface{} `json:"data,omitempty"`
-	Sender interface{} `json:"data,omitempty"`
+	Sender interface{} `json:"sender,omitempty"`
 }
 
 const (
-	OPSubscribe = "subscribe"
+	OPSubscribe         = "subscribe"
+	OPSubscribeResponse = "subscribe_response"
+	OPPublish           = "publish"
+	OPPublishResponse   = "publish_response"
 )
 
 func ToBytes(m *Message) []byte {
 	b, err := json.Marshal(m)
 	if err != nil {
+		log.Printf("ToBytes: error: %s", err.Error())
 		return []byte("")
 	}
 	return b
@@ -30,7 +35,7 @@ func ToBytes(m *Message) []byte {
   "id": "req123",
 }
 {
-  "op": "connect-response",
+  "op": "connect_response",
   "id": "req123",
   "data": {
     "type": "success",
@@ -45,6 +50,14 @@ func ToBytes(m *Message) []byte {
   "id": "reqid1",
   "topics": [ "topic1", "topic2" ],
 }
+{
+  "op": "subscribe_response",
+  "id": "reqid1",
+  "data": {
+    "type": "success",
+  },
+}
+
 */
 
 /*
@@ -58,7 +71,7 @@ func ToBytes(m *Message) []byte {
   },
 }
 {
-  "op": "publish-response",
+  "op": "publish_response",
   "id": "reqid1",
   "data": {
     "type": "success",
