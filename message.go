@@ -14,10 +14,12 @@ type Message struct {
 }
 
 const (
-	OPSubscribe         = "subscribe"
-	OPSubscribeResponse = "subscribe_response"
-	OPPublish           = "publish"
-	OPPublishResponse   = "publish_response"
+	OPSubscribe           = "subscribe"
+	OPSubscribeResponse   = "subscribe_response"
+	OPPublish             = "publish"
+	OPPublishResponse     = "publish_response"
+	OPUnsubscribe         = "unsubscribe"
+	OPUnsubscribeResponse = "unsubscribe_response"
 )
 
 func ToBytes(m *Message) []byte {
