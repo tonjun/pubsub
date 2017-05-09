@@ -42,7 +42,7 @@ func (c *Connection) ID() uint64 {
 
 // Send sends the data to the websocket
 func (c *Connection) Send(data []byte) error {
-	log.Printf("%d Send: \"%s\"", c.id, string(data))
+	//log.Printf("%d Send: \"%s\"", c.id, string(data))
 	if c.isClosed() {
 		return fmt.Errorf("connection closed")
 	}
@@ -125,12 +125,12 @@ func (c *Connection) readPump() {
 		log.Printf("readPump: done")
 	}()
 	for {
-		t, message, err := c.ws.ReadMessage()
+		_, message, err := c.ws.ReadMessage()
 		if err != nil {
 			log.Printf("read error: %s", err.Error())
 			break
 		}
-		log.Printf("readPump: messageType: %d message: %s", t, message)
+		//log.Printf("readPump: messageType: %d message: %s", t, message)
 		if c.onMesgCb != nil {
 			c.onMesgCb(c, message)
 		}

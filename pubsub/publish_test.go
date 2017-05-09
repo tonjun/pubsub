@@ -17,15 +17,16 @@ import (
 var _ = Describe("Publish", func() {
 
 	var (
-		server  *PubSubServer
+		server *PubSubServer
+
 		client1 *wsclient.WSClient
-		buffer1 *gbytes.Buffer
 		client2 *wsclient.WSClient
+
+		buffer1 *gbytes.Buffer
 		buffer2 *gbytes.Buffer
 	)
 
 	BeforeEach(func() {
-		log.Printf("BeforeEach")
 		buffer1 = gbytes.NewBuffer()
 		buffer2 = gbytes.NewBuffer()
 
@@ -42,7 +43,6 @@ var _ = Describe("Publish", func() {
 		// connect a client1 and write all incoming message to gbytes.Buffer
 		client1 = wsclient.NewWSClient("ws://localhost:7070/ws")
 		client1.OnMessage(func(data []byte) {
-			log.Printf("client1 OnMessage: %s", string(data))
 			buffer1.Write(data)
 		})
 		client1.OnOpen(func() {
@@ -59,7 +59,6 @@ var _ = Describe("Publish", func() {
 		// connect a client2 and write all incoming message to gbytes.Buffer
 		client2 = wsclient.NewWSClient("ws://localhost:7070/ws")
 		client2.OnMessage(func(data []byte) {
-			log.Printf("client2 OnMessage: %s", string(data))
 			buffer2.Write(data)
 		})
 		client2.OnOpen(func() {
@@ -76,9 +75,8 @@ var _ = Describe("Publish", func() {
 	})
 
 	AfterEach(func() {
-		log.Printf("AfterEach")
 		server.Close()
-		time.Sleep(1000 * time.Millisecond)
+		//time.Sleep(1000 * time.Millisecond)
 	})
 
 	It("Publish should send the message to all the subscribers", func(done Done) {

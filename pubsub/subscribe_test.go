@@ -24,7 +24,6 @@ var _ = Describe("Subscribe", func() {
 	)
 
 	BeforeEach(func() {
-		log.Printf("BeforeEach")
 		buffer = gbytes.NewBuffer()
 		connected := make(chan bool)
 
@@ -55,9 +54,8 @@ var _ = Describe("Subscribe", func() {
 	})
 
 	AfterEach(func() {
-		log.Printf("AfterEach")
 		server.Close()
-		time.Sleep(500 * time.Millisecond)
+		//time.Sleep(500 * time.Millisecond)
 	})
 
 	It("Subscribe should get a successful response", func() {
