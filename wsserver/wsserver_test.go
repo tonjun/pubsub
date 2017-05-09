@@ -3,6 +3,7 @@ package wsserver
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"testing"
 	"time"
@@ -13,11 +14,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func getListenAddress() string {
+	l, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		panic(err)
+	}
+	addr := l.Addr().String()
+	l.Close()
+	return addr
+}
+
 func TestConnectionCallbacks(t *testing.T) {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 
 	var srv pubsub.Server
-	addr := ":7070"
+	//addr := ":7070"
+	addr := getListenAddress()
+	log.Printf("Server listen address: %s", addr)
 	srv = NewWSServer(&Options{
 		ListenAddr: addr,
 		Path:       "/ws",
@@ -76,7 +89,8 @@ func TestConnectionCallbacks(t *testing.T) {
 	var conn2 *websocket.Conn
 	var resp *http.Response
 	var err error
-	conn1, resp, err = websocket.DefaultDialer.Dial(fmt.Sprintf("ws://localhost%s/ws", addr), nil)
+	log.Printf("connecting to: %s", fmt.Sprintf("ws://%s/ws", addr))
+	conn1, resp, err = websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws", addr), nil)
 	assert.Nil(t, err)
 	assert.NotNil(t, resp)
 	assert.NotNil(t, conn1)
@@ -84,7 +98,7 @@ func TestConnectionCallbacks(t *testing.T) {
 	time.Sleep(10 * time.Millisecond)
 	check1 <- true
 
-	conn2, resp, err = websocket.DefaultDialer.Dial(fmt.Sprintf("ws://localhost%s/ws", addr), nil)
+	conn2, resp, err = websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws", addr), nil)
 	assert.Nil(t, err)
 	assert.NotNil(t, resp)
 	assert.NotNil(t, conn2)
@@ -107,7 +121,7 @@ func TestMessageCallback(t *testing.T) {
 
 	var srv pubsub.Server
 
-	addr := ":7070"
+	addr := getListenAddress()
 
 	srv = NewWSServer(&Options{
 		ListenAddr: addr,
@@ -170,7 +184,7 @@ func TestMessageCallback(t *testing.T) {
 	var conn2 *websocket.Conn
 	var resp *http.Response
 	var err error
-	conn1, resp, err = websocket.DefaultDialer.Dial(fmt.Sprintf("ws://localhost%s/ws", addr), nil)
+	conn1, resp, err = websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws", addr), nil)
 	assert.Nil(t, err)
 	assert.NotNil(t, resp)
 	assert.NotNil(t, conn1)
@@ -187,7 +201,7 @@ func TestMessageCallback(t *testing.T) {
 	time.Sleep(10 * time.Millisecond)
 	check2 <- true
 
-	conn2, resp, err = websocket.DefaultDialer.Dial(fmt.Sprintf("ws://localhost%s/ws", addr), nil)
+	conn2, resp, err = websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws", addr), nil)
 	assert.Nil(t, err)
 	assert.NotNil(t, resp)
 	assert.NotNil(t, conn2)
