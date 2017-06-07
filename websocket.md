@@ -60,7 +60,7 @@
   "type": "request",
   "id": "request_id_1",
   "auth": {
-    "type": "facebook",
+    "provider": "facebook",
     "access_token": "xxxxxx",
   },
 }
@@ -73,6 +73,7 @@
   "op": "connect",
   "type": "success",
   "id": "request_id_1",
+  "session": "xxxxxxxyyyyy",
   "user": {
     "id": "000000001",
     "name": "Bob",
@@ -214,5 +215,15 @@
     "id": "000000001",
     "name": "Bob",
   },
+}
+```
+
+## Resume connection
+
+```json
+{
+  "op": "resume",
+  "id": "abc123",
+  "session": "xxxxxxyyyy",
 }
 ```
